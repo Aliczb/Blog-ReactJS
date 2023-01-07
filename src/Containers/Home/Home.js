@@ -5,10 +5,18 @@ function Home() {
   return (
     <>
       <h1>Accueil</h1>
-      <Link to='/contact' style={{ marginRight: '10px' }}>
-        Contact
+      <Link to='/articles/1'>Voir mon article</Link>
+      <Link
+        to={{
+          pathname: '/articles/1',
+          // hash: '#projets'
+          // search: '?order=new',
+        }}
+        state={{ fromHome: true }}
+        style={{ marginLeft: '10px' }}
+      >
+        Lien vers une ancre
       </Link>
-      <Link to='/articles'>Articles</Link>
     </>
   );
 }
