@@ -1,11 +1,14 @@
 // Librairie
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import classes from './Ajouter.module.css';
+import axios from '../../../config/axios-firebase';
+import routes from '../../../config/routes';
 
 // Components
 import Input from '../../../Components/UI/Input/Input';
 
-function Ajouter() {
+function Ajouter(props) {
   // States
   const [inputs, setInputs] = useState({
     titre: {
@@ -22,6 +25,23 @@ function Ajouter() {
         minLength: 5,
         maxLength: 85,
       },
+      touched: false,
+      errorMessage: 'Le titre doit faire entre 5 et 85 caractères.',
+    },
+    accroche: {
+      elementType: 'textarea',
+      elementConfig: {},
+      value: '',
+      label: "Accroche de l'article",
+      valid: false,
+      validation: {
+        required: true,
+        minLength: 10,
+        maxLength: 140,
+      },
+      touched: false,
+      errorMessage:
+        "L'accroche ne doit pas être vide et doit être comprise entre 10 et 140 caractères.",
     },
     contenu: {
       elementType: 'textarea',
@@ -32,6 +52,8 @@ function Ajouter() {
       validation: {
         required: true,
       },
+      touched: false,
+      errorMessage: 'Le contenu ne doit pas être vide.',
     },
     auteur: {
       elementType: 'input',
@@ -45,6 +67,8 @@ function Ajouter() {
       validation: {
         required: true,
       },
+      touched: false,
+      errorMessage: 'Il doit y avoir un auteur pour cet article.',
     },
     brouillon: {
       elementType: 'select',
@@ -54,7 +78,7 @@ function Ajouter() {
           { value: false, displayValue: 'Publié' },
         ],
       },
-      value: '',
+      value: true,
       label: 'Etat',
       valid: true,
       validation: {},
@@ -88,6 +112,7 @@ function Ajouter() {
     // Change la valeur
     const nouveauxInputs = { ...inputs };
     nouveauxInputs[id].value = event.target.value;
+    nouveauxInputs[id].touched = true;
 
     // Vérification de la valeur
     nouveauxInputs[id].valid = checkValidity(
@@ -108,10 +133,30 @@ function Ajouter() {
   const formHandler = (event) => {
     event.preventDefault();
 
-    console.log('test');
+    const article = {
+      titre: inputs.titre.value,
+      contenu: inputs.contenu.value,
+      auteur: inputs.auteur.value,
+      brouillon: inputs.brouillon.value,
+      accroche: inputs.accroche.value,
+      date: Date.now(),
+    };
+
+    axios
+      .post('/articles.json', article)
+      .then((response) => {
+        console.log(response);
+        navigate(routes.ARTICLES);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
   // Variables
+
+  const navigate = useNavigate();
+
   const formElementsArray = [];
   for (let key in inputs) {
     formElementsArray.push({
@@ -133,6 +178,9 @@ function Ajouter() {
           label={formElement.config.label}
           type={formElement.config.elementType}
           config={formElement.config.elementConfig}
+          valid={formElement.config.valid}
+          touched={formElement.config.touched}
+          errorMessage={formElement.config.errorMessage}
           changed={(e) => inputChangedHandler(e, formElement.id)}
         />
       ))}

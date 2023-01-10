@@ -5,6 +5,12 @@ import classes from './Input.module.css';
 function Input(props) {
   let inputElement;
 
+  const inputClasses = [];
+
+  if (!props.valid && props.touched) {
+    inputClasses.push(classes.invalid);
+  }
+
   switch (
     props.type // si props.type = input alors inputElement = <input />
   ) {
@@ -13,6 +19,7 @@ function Input(props) {
         <input
           {...props.config}
           value={props.value}
+          className={inputClasses}
           id={props.id}
           onChange={props.changed}
         />
@@ -23,6 +30,7 @@ function Input(props) {
         <textarea
           value={props.value}
           onChange={props.changed}
+          className={inputClasses}
           id={props.id}
         ></textarea>
       );
@@ -32,6 +40,7 @@ function Input(props) {
         <select
           value={props.value}
           onChange={props.changed}
+          className={inputClasses}
           id={props.id}
         >
           {props.config.options.map((option) => (
@@ -48,6 +57,9 @@ function Input(props) {
     <div className={classes.Input}>
       <label htmlFor={props.id}>{props.label}</label>
       {inputElement}
+      {!props.valid && props.touched ? (
+        <span>{props.errorMessage}</span>
+      ) : null}
     </div>
   );
 }

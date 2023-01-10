@@ -20,3 +20,12 @@
   border: 1px solid silver;
   margin-top: 5px;
 }
+
+.invalid {
+  background: #f3c7c7;
+  border: 1px solid #e45454;
+}
+
+.Input span {
+  color: red;
+}
