@@ -1,19 +1,41 @@
-import React from 'react';
-// import { useEffect } from 'react';
-// import { useNavigate } from 'react-router-dom';
-// import { Navigate } from 'react-router-dom';
+// Librairies
+import React, { useState, useEffect } from 'react';
+import axios from '../../config/axios-firebase';
 
-function Articles(props) {
-  //   const navigate = useNavigate();
+// Components
+import DisplayedArticles from '../../Components/DisplayedArticles/DisplayedArticles';
 
-  //   useEffect(() => {
-  //     navigate('/');
-  //   }, []);
+function Articles() {
+  // State
+  const [articles, setArticles] = useState([]);
+
+  // Component didMount
+  useEffect(() => {
+    axios
+      .get('/articles.json')
+      .then((response) => {
+        const articlesArray = [];
+
+        for (let key in response.data) {
+          articlesArray.push({
+            ...response.data[key],
+            id: key,
+          });
+        }
+
+        articlesArray.reverse();
+
+        setArticles(articlesArray);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, []);
 
   return (
     <>
       <h1>Articles</h1>
-      {/* <Navigate to='/' /> */}
+      <DisplayedArticles articles={articles} />
     </>
   );
 }
