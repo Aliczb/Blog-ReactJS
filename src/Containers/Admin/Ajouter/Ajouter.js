@@ -1,6 +1,6 @@
 // Librairie
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import classes from './Ajouter.module.css';
 import axios from '../../../config/axios-firebase';
 import routes from '../../../config/routes';
@@ -9,6 +9,7 @@ import routes from '../../../config/routes';
 import Input from '../../../Components/UI/Input/Input';
 
 function Ajouter(props) {
+  const location = useLocation();
   // States
   const [inputs, setInputs] = useState({
     titre: {
@@ -17,9 +18,12 @@ function Ajouter(props) {
         type: 'text',
         placeholder: "Titre de l'article",
       },
-      value: '',
+      value:
+        location.state && location.state.article
+          ? location.state.article.titre
+          : '',
       label: 'Titre',
-      valid: false,
+      valid: location.state && location.state.article ? true : false,
       validation: {
         required: true,
         minLength: 5,
@@ -31,9 +35,12 @@ function Ajouter(props) {
     accroche: {
       elementType: 'textarea',
       elementConfig: {},
-      value: '',
+      value:
+        location.state && location.state.article
+          ? location.state.article.accroche
+          : '',
       label: "Accroche de l'article",
-      valid: false,
+      valid: location.state && location.state.article ? true : false,
       validation: {
         required: true,
         minLength: 10,
@@ -46,9 +53,12 @@ function Ajouter(props) {
     contenu: {
       elementType: 'textarea',
       elementConfig: {},
-      value: '',
+      value:
+        location.state && location.state.article
+          ? location.state.article.contenu
+          : '',
       label: "Contenu de l'article",
-      valid: false,
+      valid: location.state && location.state.article ? true : false,
       validation: {
         required: true,
       },
@@ -61,9 +71,12 @@ function Ajouter(props) {
         type: 'text',
         placeholder: "Auteur de l'article",
       },
-      value: '',
+      value:
+        location.state && location.state.article
+          ? location.state.article.auteur
+          : '',
       label: 'Auteur',
-      valid: false,
+      valid: location.state && location.state.article ? true : false,
       validation: {
         required: true,
       },
@@ -78,14 +91,19 @@ function Ajouter(props) {
           { value: false, displayValue: 'Publié' },
         ],
       },
-      value: true,
+      value:
+        location.state && location.state.article
+          ? location.state.article.brouillon
+          : '',
       label: 'Etat',
       valid: true,
       validation: {},
     },
   });
 
-  const [valid, setValid] = useState(false);
+  const [valid, setValid] = useState(
+    location.state && location.state.article ? true : false
+  );
 
   // Fonctions
   const checkValidity = (value, rules) => {
@@ -130,8 +148,34 @@ function Ajouter(props) {
     setValid(formIsValid);
   };
 
+  const generateSlug = (str) => {
+    if (!str) return;
+    str = str.replace(/^\s+|\s+$/g, ''); // trim
+    str = str.toLowerCase();
+
+    // remove accents, swap ñ for n, etc
+    var from = 'àáãäâèéëêìíïîòóöôùúüûñç·/_,:;';
+    var to = 'aaaaaeeeeiiiioooouuuunc------';
+
+    for (var i = 0, l = from.length; i < l; i++) {
+      str = str.replace(
+        new RegExp(from.charAt(i), 'g'),
+        to.charAt(i)
+      );
+    }
+
+    str = str
+      .replace(/[^a-z0-9 -]/g, '') // remove invalid chars
+      .replace(/\s+/g, '-') // collapse whitespace and replace by -
+      .replace(/-+/g, '-'); // collapse dashes
+
+    return str;
+  };
+
   const formHandler = (event) => {
     event.preventDefault();
+
+    const slug = generateSlug(inputs.titre.value);
 
     const article = {
       titre: inputs.titre.value,
@@ -140,17 +184,33 @@ function Ajouter(props) {
       brouillon: inputs.brouillon.value,
       accroche: inputs.accroche.value,
       date: Date.now(),
+      slug: slug,
     };
 
-    axios
-      .post('/articles.json', article)
-      .then((response) => {
-        console.log(response);
-        navigate(routes.ARTICLES);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    if (location.state && location.state.article) {
+      axios
+        .put(
+          '/articles/' + location.state.article.id + '.json',
+          article
+        )
+        .then((response) => {
+          console.log(response);
+          navigate(routes.ARTICLES + '/' + article.slug);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    } else {
+      axios
+        .post('/articles.json', article)
+        .then((response) => {
+          console.log(response);
+          navigate(routes.ARTICLES);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
   };
 
   // Variables
@@ -187,7 +247,11 @@ function Ajouter(props) {
       <div className={classes.submit}>
         <input
           type='submit'
-          value='Ajouter un article'
+          value={
+            location.state && location.state.article
+              ? "Modifier l'article"
+              : 'Ajouter un article'
+          }
           disabled={!valid}
         />
       </div>
@@ -196,7 +260,11 @@ function Ajouter(props) {
 
   return (
     <div className='container'>
-      <h1>Ajouter</h1>
+      {location.state && location.state.article ? (
+        <h1>Modifier</h1>
+      ) : (
+        <h1>Ajouter</h1>
+      )}
       {form}
     </div>
   );

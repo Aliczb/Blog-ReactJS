@@ -40,7 +40,7 @@ function App() {
             element={<Articles />}
           />
           <Route
-            path={routes.ARTICLES + '/:id'}
+            path={routes.ARTICLES + '/:slug'}
             element={<Article />}
           />
           <Route exact path={routes.AJOUTER} element={<Ajouter />} />
