@@ -12,7 +12,9 @@ function Navigation() {
       <NavigationItem to={routes.HOME}>Accueil</NavigationItem>
       <NavigationItem to={routes.ARTICLES}>Articles</NavigationItem>
       <NavigationItem to={routes.CONTACT}>Contact</NavigationItem>
-      <NavigationItem to={routes.AJOUTER}>Ajouter</NavigationItem>
+      <NavigationItem to={routes.MANAGE_ARTICLE}>
+        Ajouter
+      </NavigationItem>
     </ul>
   );
 }

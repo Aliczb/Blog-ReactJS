@@ -14,7 +14,7 @@ function Articles() {
     axios
       .get('/articles.json')
       .then((response) => {
-        const articlesArray = [];
+        let articlesArray = [];
 
         for (let key in response.data) {
           articlesArray.push({
@@ -23,7 +23,13 @@ function Articles() {
           });
         }
 
+        // Chronologie
         articlesArray.reverse();
+
+        // Trier les articles
+        articlesArray = articlesArray.filter(
+          (articlesPublies) => articlesPublies.brouillon == 'false'
+        );
 
         setArticles(articlesArray);
       })

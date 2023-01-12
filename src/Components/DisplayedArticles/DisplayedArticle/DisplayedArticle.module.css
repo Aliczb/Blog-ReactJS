@@ -2,8 +2,8 @@
   width: 300px;
   padding: 15px;
   background-color: #f1f1f1;
-  margin: 10px;
   transition: 0.3s;
+  height: 100%;
 }
 
 .DisplayedArticle:hover {
@@ -14,4 +14,5 @@
 .link {
   text-decoration: none;
   color: inherit;
+  margin: 15px;
 }

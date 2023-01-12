@@ -20,6 +20,11 @@ function Article(props) {
         '/articles.json?orderBy="slug"&equalTo="' + getId.slug + '"'
       )
       .then((response) => {
+        // si l'article recherché dans la barre de recherche n'existe pas, on redirige vers la home page
+        if (Object.keys(response.data).length === 0) {
+          navigate(routes.HOME);
+        }
+
         for (let key in response.data) {
           setArticle({
             ...response.data[key],
@@ -56,7 +61,10 @@ function Article(props) {
         {article.contenu}
 
         <div className={classes.button}>
-          <Link to={routes.AJOUTER} state={{ article: article }}>
+          <Link
+            to={routes.MANAGE_ARTICLE}
+            state={{ article: article }}
+          >
             <button>Modifier</button>
           </Link>
           <button onClick={deleteClickedHandler}>Supprimer</button>
@@ -66,6 +74,9 @@ function Article(props) {
       <div className={classes.author}>
         <b>{article.auteur}</b>
         <span>Publié le {date}.</span>
+        {article.brouillon == 'true' ? (
+          <span className={classes.badge}>Brouillon</span>
+        ) : null}
       </div>
     </div>
   );

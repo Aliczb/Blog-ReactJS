@@ -10,7 +10,7 @@ import Home from './Containers/Home/Home';
 import Contact from './Components/Contact/Contact';
 import Articles from './Containers/Articles/Articles';
 import Article from './Containers/Articles/Article/Article';
-import Ajouter from './Containers/Admin/Ajouter/Ajouter';
+import ManageArticle from './Containers/Admin/ManageArticle/ManageArticle';
 
 function App() {
   return (
@@ -43,7 +43,11 @@ function App() {
             path={routes.ARTICLES + '/:slug'}
             element={<Article />}
           />
-          <Route exact path={routes.AJOUTER} element={<Ajouter />} />
+          <Route
+            exact
+            path={routes.MANAGE_ARTICLE}
+            element={<ManageArticle />}
+          />
           <Route path='*' element={<h1>404 not found</h1>} />
         </Routes>
       </Layout>

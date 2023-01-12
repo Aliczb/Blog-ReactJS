@@ -40,3 +40,11 @@
 .button button:hover {
   background-color: #d3450d;
 }
+
+.badge {
+  font-size: 0.9rem;
+  background-color: #cccccc;
+  color: white;
+  border-radius: 4px;
+  padding: 5px 10px;
+}

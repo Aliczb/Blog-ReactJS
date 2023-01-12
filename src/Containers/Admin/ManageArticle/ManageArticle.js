@@ -1,14 +1,14 @@
 // Librairie
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import classes from './Ajouter.module.css';
+import classes from './ManageArticle.module.css';
 import axios from '../../../config/axios-firebase';
 import routes from '../../../config/routes';
 
 // Components
 import Input from '../../../Components/UI/Input/Input';
 
-function Ajouter(props) {
+function ManageArticle(props) {
   const location = useLocation();
   // States
   const [inputs, setInputs] = useState({
@@ -96,7 +96,7 @@ function Ajouter(props) {
           ? location.state.article.brouillon
           : '',
       label: 'Etat',
-      valid: true,
+      valid: location.state && location.state.article ? true : false,
       validation: {},
     },
   });
@@ -270,4 +270,4 @@ function Ajouter(props) {
   );
 }
 
-export default Ajouter;
+export default ManageArticle;
