@@ -4,6 +4,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import classes from './ManageArticle.module.css';
 import axios from '../../../config/axios-firebase';
 import routes from '../../../config/routes';
+import { checkValidity } from '../../../shared/utility';
 
 // Components
 import Input from '../../../Components/UI/Input/Input';
@@ -80,7 +81,7 @@ function ManageArticle(props) {
       validation: {
         required: true,
       },
-      touched: false,
+      touched: false, 
       errorMessage: 'Il doit y avoir un auteur pour cet article.',
     },
     brouillon: {
@@ -106,25 +107,6 @@ function ManageArticle(props) {
   );
 
   // Fonctions
-  const checkValidity = (value, rules) => {
-    let isValid = true;
-
-    if (rules.required) {
-      isValid = value.trim() !== '' && isValid; //isValid = value si c'est différent d'un champs vide et que c'est valid
-    }
-
-    if (rules.minLength) {
-      isValid = value.length >= rules.minLength && isValid;
-    }
-
-    if (rules.maxLength) {
-      isValid = value.length <= rules.maxLength && isValid;
-    }
-
-    return isValid;
-  };
-
-  // trim permet de supprimer tous les espaces vides avant et après la valeur
 
   const inputChangedHandler = (event, id) => {
     // Change la valeur

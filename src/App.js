@@ -11,6 +11,7 @@ import Contact from './Components/Contact/Contact';
 import Articles from './Containers/Articles/Articles';
 import Article from './Containers/Articles/Article/Article';
 import ManageArticle from './Containers/Admin/ManageArticle/ManageArticle';
+import Authentification from './Containers/Security/Authentification/Authentification';
 
 function App() {
   return (
@@ -47,6 +48,11 @@ function App() {
             exact
             path={routes.MANAGE_ARTICLE}
             element={<ManageArticle />}
+          />
+          <Route
+            exact
+            path={routes.AUTHENTIFICATION}
+            element={<Authentification />}
           />
           <Route path='*' element={<h1>404 not found</h1>} />
         </Routes>

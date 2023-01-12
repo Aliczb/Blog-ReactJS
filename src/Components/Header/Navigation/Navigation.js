@@ -15,6 +15,9 @@ function Navigation() {
       <NavigationItem to={routes.MANAGE_ARTICLE}>
         Ajouter
       </NavigationItem>
+      <NavigationItem to={routes.AUTHENTIFICATION}>
+        Authentification
+      </NavigationItem>
     </ul>
   );
 }
