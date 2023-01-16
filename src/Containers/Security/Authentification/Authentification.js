@@ -3,11 +3,18 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { checkValidity } from '../../../shared/utility';
 import classes from './Authentification.module.css';
+import fire from '../../../config/firebase';
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+} from 'firebase/auth';
 
 // Components
 import Input from '../../../Components/UI/Input/Input';
+import routes from '../../../config/routes';
 
-function Authentification() {
+function Authentification(props) {
   // States
   const [inputs, setInputs] = useState({
     email: {
@@ -37,13 +44,19 @@ function Authentification() {
       valid: false,
       validation: {
         required: true,
+        minLenght: 6,
       },
       touched: false,
-      errorMessage: 'Le mot de passe doit être renseigné.',
+      errorMessage:
+        'Le mot de passe doit faire au moins 6 caractères.',
     },
   });
 
   const [valid, setValid] = useState(false);
+
+  const [emailError, setEmailError] = useState(false);
+
+  const [loginError, setLoginError] = useState(false);
 
   // Fonctions
   const inputChangedHandler = (event, id) => {
@@ -68,6 +81,56 @@ function Authentification() {
     setValid(formIsValid);
   };
 
+  const auth = getAuth(fire);
+
+  const registerClickedHandler = () => {
+    const user = {
+      email: inputs.email.value,
+      password: inputs.password.value,
+    };
+
+    createUserWithEmailAndPassword(auth, user.email, user.password)
+      .then((response) => {
+        navigate(routes.HOME);
+      })
+      .catch((error) => {
+        switch (error.code) {
+          case 'auth/email-already-in-use':
+            setEmailError(true);
+            break;
+        }
+        // adresse email en doublon
+        // console.log(error.code);
+        // console.log(error.message);
+      });
+  };
+
+  const loginClickedHandler = () => {
+    const user = {
+      email: inputs.email.value,
+      password: inputs.password.value,
+    };
+
+    signInWithEmailAndPassword(auth, user.email, user.password)
+      .then((response) => {
+        navigate(routes.HOME);
+      })
+      .catch((error) => {
+        switch (error.code) {
+          case 'auth/invalide-email':
+          case 'auth/user-disabled':
+          case 'auth/user-not-found':
+            setLoginError(true);
+            break;
+        }
+      });
+  };
+
+  // Pour stopper l'evenement
+  const formHandler = (event) => {
+    event.preventDefault();
+  };
+
   // Variables
   const navigate = useNavigate();
 
@@ -80,7 +143,7 @@ function Authentification() {
   }
 
   let form = (
-    <form>
+    <form onSubmit={(e) => formHandler(e)}>
       {formElementsArray.map((formElement) => (
         <Input
           key={formElement.id}
@@ -96,8 +159,20 @@ function Authentification() {
         />
       ))}
       <div className={classes.buttons}>
-        <button className={classes.button}>Inscription</button>
-        <button className={classes.button}>Connexion</button>
+        <button
+          onClick={registerClickedHandler}
+          disabled={!valid}
+          className={classes.button}
+        >
+          Inscription
+        </button>
+        <button
+          onClick={loginClickedHandler}
+          disabled={!valid}
+          className={classes.button}
+        >
+          Connexion
+        </button>
       </div>
     </form>
   );
@@ -105,7 +180,19 @@ function Authentification() {
   return (
     <>
       <h1>Authentification</h1>
-      <div className={classes.form}>{form}</div>
+      <div className={classes.form}>
+        {loginError ? (
+          <div className={classes.alert}>
+            Impossible de vous authentifier.
+          </div>
+        ) : null}
+        {emailError ? (
+          <div className={classes.alert}>
+            Cette adresse email est déjà utilisée.
+          </div>
+        ) : null}
+        {form}
+      </div>
     </>
   );
 }

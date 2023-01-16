@@ -1,16 +1,22 @@
 // Librairie
 import React, { useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import {
+  useNavigate,
+  useLocation,
+  useParams,
+} from 'react-router-dom';
 import classes from './ManageArticle.module.css';
 import axios from '../../../config/axios-firebase';
 import routes from '../../../config/routes';
 import { checkValidity } from '../../../shared/utility';
+import fire from '../../../config/firebase';
 
 // Components
 import Input from '../../../Components/UI/Input/Input';
 
 function ManageArticle(props) {
   const location = useLocation();
+
   // States
   const [inputs, setInputs] = useState({
     titre: {
@@ -81,7 +87,7 @@ function ManageArticle(props) {
       validation: {
         required: true,
       },
-      touched: false, 
+      touched: false,
       errorMessage: 'Il doit y avoir un auteur pour cet article.',
     },
     brouillon: {
@@ -184,7 +190,7 @@ function ManageArticle(props) {
         });
     } else {
       axios
-        .post('/articles.json', article)
+        .post('/articles/' + '.json', article)
         .then((response) => {
           console.log(response);
           navigate(routes.ARTICLES);
